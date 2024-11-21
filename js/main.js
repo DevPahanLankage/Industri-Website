@@ -193,3 +193,39 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initial update
   updateGallery();
 });
+
+// Add touch support for gallery
+document.addEventListener("DOMContentLoaded", function () {
+  const gallery = document.querySelector(".gallery-grid");
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  gallery.addEventListener(
+    "touchstart",
+    (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    },
+    false
+  );
+
+  gallery.addEventListener(
+    "touchend",
+    (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    },
+    false
+  );
+
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    if (touchEndX < touchStartX - swipeThreshold) {
+      // Swipe left - next slide
+      document.querySelector(".next-btn").click();
+    }
+    if (touchEndX > touchStartX + swipeThreshold) {
+      // Swipe right - previous slide
+      document.querySelector(".prev-btn").click();
+    }
+  }
+});
