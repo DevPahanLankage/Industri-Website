@@ -81,7 +81,7 @@ function createEventCards() {
 // Call the function when the page loads
 document.addEventListener("DOMContentLoaded", createEventCards);
 
-// Add this to ensure video plays
+// Video handling
 document.addEventListener("DOMContentLoaded", function () {
   const video = document.getElementById("heroVideo");
   if (video) {
@@ -89,27 +89,107 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("Video play failed:", error);
     });
   }
-});
 
-// Add this at the start of your JS file
-document.addEventListener('DOMContentLoaded', function() {
-  const video = document.getElementById('heroVideo');
-  
   // Reduce video quality on mobile devices
   if (window.innerWidth <= 768) {
-    video.setAttribute('playbackQuality', 'small');
+    video.setAttribute("playbackQuality", "small");
   }
-  
+
   // Pause video when not in viewport
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        video.play();
-      } else {
-        video.pause();
-      }
-    });
-  }, { threshold: 0.1 });
-  
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
   observer.observe(video);
+});
+
+// Gallery Navigation
+document.addEventListener("DOMContentLoaded", function () {
+  const galleryItems = document.querySelectorAll(".gallery-item");
+  const prevBtn = document.querySelector(".prev-btn");
+  const nextBtn = document.querySelector(".next-btn");
+  const dotsContainer = document.querySelector(".gallery-dots");
+  let currentIndex = 0;
+
+  // Create dots
+  galleryItems.forEach((_, index) => {
+    const dot = document.createElement("div");
+    dot.classList.add("gallery-dot");
+    if (index === 0) dot.classList.add("active");
+    dot.addEventListener("click", () => {
+      goToSlide(index);
+    });
+    dotsContainer.appendChild(dot);
+  });
+
+  const dots = document.querySelectorAll(".gallery-dot");
+
+  function updateGallery() {
+    galleryItems.forEach((item) => {
+      item.classList.remove("active");
+    });
+
+    dots.forEach((dot) => dot.classList.remove("active"));
+
+    galleryItems[currentIndex].classList.add("active");
+    dots[currentIndex].classList.add("active");
+  }
+
+  function goToSlide(index) {
+    currentIndex = index;
+    updateGallery();
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % galleryItems.length;
+    updateGallery();
+  }
+
+  function prevSlide() {
+    currentIndex =
+      (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+    updateGallery();
+  }
+
+  // Update the auto-advance interval
+  let autoAdvanceInterval;
+
+  function startAutoAdvance() {
+    stopAutoAdvance(); // Clear any existing interval
+    autoAdvanceInterval = setInterval(nextSlide, 5000);
+  }
+
+  function stopAutoAdvance() {
+    if (autoAdvanceInterval) {
+      clearInterval(autoAdvanceInterval);
+    }
+  }
+
+  // Update event listeners
+  nextBtn.addEventListener("click", () => {
+    nextSlide();
+    stopAutoAdvance();
+    startAutoAdvance();
+  });
+
+  prevBtn.addEventListener("click", () => {
+    prevSlide();
+    stopAutoAdvance();
+    startAutoAdvance();
+  });
+
+  // Start auto-advance
+  startAutoAdvance();
+
+  // Initial update
+  updateGallery();
 });
