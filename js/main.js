@@ -90,3 +90,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+// Add this at the start of your JS file
+document.addEventListener('DOMContentLoaded', function() {
+  const video = document.getElementById('heroVideo');
+  
+  // Reduce video quality on mobile devices
+  if (window.innerWidth <= 768) {
+    video.setAttribute('playbackQuality', 'small');
+  }
+  
+  // Pause video when not in viewport
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  observer.observe(video);
+});
