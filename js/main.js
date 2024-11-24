@@ -110,11 +110,18 @@ document.addEventListener("DOMContentLoaded", function () {
   );
 
   observer.observe(video);
+
+  // Add cleanup
+  return () => observer.disconnect();
 });
 
 // Gallery Navigation
 document.addEventListener("DOMContentLoaded", function () {
-  const galleryItems = document.querySelectorAll(".gallery-item");
+  const gallery = document.querySelector(".gallery-grid");
+  if (!gallery) {
+    console.warn("Gallery element not found");
+    return;
+  }
   const prevBtn = document.querySelector(".prev-btn");
   const nextBtn = document.querySelector(".next-btn");
   const dotsContainer = document.querySelector(".gallery-dots");
@@ -205,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
     (e) => {
       touchStartX = e.changedTouches[0].screenX;
     },
-    false
+    { passive: true }
   );
 
   gallery.addEventListener(
